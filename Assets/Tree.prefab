@@ -141,7 +141,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Cutoff: 0.3
+    - _Cutoff: 0.03
     - _ShadowOffsetScale: 1
     - _ShadowStrength: 0.83
     - _SquashAmount: 1
