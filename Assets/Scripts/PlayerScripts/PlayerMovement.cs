@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 
 [RequireComponent(typeof(Rigidbody), typeof(BoxCollider))]
-public class CharacterMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float speed = 10f;
@@ -63,8 +63,8 @@ public class CharacterMovement : MonoBehaviour
             else
             {
                 // Якщо персонаж не рухається і перебуває у повітрі
-                // або на надто крутому схилі, повертаємо йому гравітацію
-                // для нормального падіння
+                // або на надто крутому схилі, повертаємо йому
+                // гравітацію для нормального падіння
                 rb.useGravity = true;
             }
             return; // Не проводимо обчислення швидкості
@@ -131,4 +131,13 @@ public class CharacterMovement : MonoBehaviour
         groundNormal = isGrounded ? hit.normal : Vector3.up;
     }
 
+    public void StopMovement()
+    {
+        // Зупинка руху персонажа
+        moveVectorInput = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        animator.SetFloat("velocity", 0f);
+    }
 }

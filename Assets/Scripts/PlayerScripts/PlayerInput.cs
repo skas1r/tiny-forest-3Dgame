@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
-    private CharacterMovement characterMovement;
+    private PlayerMovement characterMovement;
     private Vector3 moveVector;
     
     private void Awake()
     {
-        characterMovement = GetComponent<CharacterMovement>();
+        characterMovement = GetComponent<PlayerMovement>();
     }
 
     private void Update()
