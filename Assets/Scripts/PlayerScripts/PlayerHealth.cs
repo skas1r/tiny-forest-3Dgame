@@ -13,6 +13,7 @@ public class PlayerHealth : MonoBehaviour
 
     private int health = 3;
     private int score;
+    private bool isGameEnded;
     private AudioSource audioSource;
 
     private void Awake()
@@ -28,7 +29,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (health <= 0) return;
+        if (isGameEnded) return;
 
         if (other.TryGetComponent(out MushroomScript mushroom))
         {
@@ -50,17 +51,22 @@ public class PlayerHealth : MonoBehaviour
             // Знищення гриба і генерація нового замість знищеного
             mushroom.Consume();
 
-            // Смерть персонажа
-            if (health <= 0)
-            {
-                TriggerGameOver();
-            }
+            // Завершення гри
+            if (health <= 0) TriggerEndGame(false);
+            else if (score >= 10) TriggerEndGame(true);
         }
     }
 
-    private void TriggerGameOver()
+    private void TriggerEndGame(bool isWin)
     {
-        UIManager.Instance?.ShowGameOver();
+        isGameEnded = true;
+
+        StopPlayerAndInput();
+        UIManager.Instance?.ShowEndGameScreen(isWin);
+    }
+
+    private void StopPlayerAndInput()
+    {
         // Деактивація скрипта керування персонажем
         playerInputScript.enabled = false;
         // Зупинка інерції руху персонажа
@@ -68,7 +74,7 @@ public class PlayerHealth : MonoBehaviour
         {
             rb.linearVelocity = Vector3.zero;
         }
-        if(TryGetComponent(out PlayerMovement playerMovement))
+        if (TryGetComponent(out PlayerMovement playerMovement))
         {
             playerMovement.StopMovement();
         }

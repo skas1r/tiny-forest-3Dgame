@@ -1,25 +1,31 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
+    [SerializeField] private GameObject endGameScreen;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI healthText;
-    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private TextMeshProUGUI title;
+    private Image overlayImage;
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        gameOverPanel?.SetActive(false);
+        overlayImage = endGameScreen?.GetComponent<Image>();
+        endGameScreen?.SetActive(false);
     }
 
+    // Оновлення відображення статусів
     public void UpdateScore(int score)
     {
-        if (scoreText != null) scoreText.text = score.ToString();
+        if (scoreText != null) scoreText.text = score.ToString() + "/10";
     }
 
     public void UpdateHealth(int health)
@@ -27,8 +33,33 @@ public class UIManager : MonoBehaviour
         if (healthText != null) healthText.text = health.ToString();
     }
 
-    public void ShowGameOver()
+    // Відображення вікна відповідно до виграшу/програшу
+    public void ShowEndGameScreen(bool isWin)
     {
-        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+        endGameScreen?.SetActive(true);
+        if (isWin)
+        {
+            title.text = "CONGRATULATIONS! YOU WON!";
+            overlayImage.color = new Color(0.985f, 0.934f, 0.581f, 0.5f);
+        }
+        else
+        {
+            title.text = "GAME OVER";
+            overlayImage.color = new Color(0.158f, 0.11f, 0.2f, 0.9f);
+        }
+    }
+
+    // Методи для кнопок
+    public void RestartGame()
+    {
+        SceneManager.LoadScene("MainScene");
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 }
