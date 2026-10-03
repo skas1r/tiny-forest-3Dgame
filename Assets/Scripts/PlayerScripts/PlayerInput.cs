@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
-    private PlayerMovement characterMovement;
+    private PlayerMovement playerMovement;
     private Vector3 moveVector;
     
     private void Awake()
     {
-        characterMovement = GetComponent<PlayerMovement>();
+        playerMovement = GetComponent<PlayerMovement>();
     }
 
     private void Update()
@@ -20,6 +20,7 @@ public class PlayerInput : MonoBehaviour
         moveVector.x = Input.GetAxisRaw("Horizontal");
         moveVector.z = Input.GetAxisRaw("Vertical");
 
-        characterMovement.AddMoveVectorInput(moveVector.normalized);
+        playerMovement.AddMoveVectorInput(moveVector.normalized);
+        playerMovement.AddRunningInput(Input.GetKey(KeyCode.LeftShift));
     }
 }

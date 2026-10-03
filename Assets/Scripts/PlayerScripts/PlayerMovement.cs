@@ -1,35 +1,36 @@
 using UnityEngine;
 using Unity.Cinemachine;
 
-[RequireComponent(typeof(Rigidbody), typeof(BoxCollider))]
+[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float speed = 10f;
+    [SerializeField] private float baseSpeed = 25f;
     [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private CinemachineCamera characterCamera;
 
     [Header("Ground")]
-    [SerializeField] private LayerMask groundMask;
-    [SerializeField] private float groundCheckDistance = 0.3f;
-    [SerializeField] private float maxSlopeAngle = 70f;
+    [SerializeField] private float groundCheckDistance = 10f;
+    [SerializeField] private float rayOffsetFromCenter = 7f;
 
+    [SerializeField] private bool isGrounded;
+    private float speed;
     private Vector3 moveVectorInput;
     private Vector3 moveDirection;
     private Vector3 rotationDirection;
-    private Vector3 groundNormal = Vector3.up;
     private Animator animator;
     private Rigidbody rb;
-    private BoxCollider box;
-    private bool isGrounded;
+    private CapsuleCollider col;
 
     public bool IsMoving => moveVectorInput.sqrMagnitude > 0.0001f;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        box = GetComponent<BoxCollider>();
+        col = GetComponent<CapsuleCollider>();
         animator = GetComponentInChildren<Animator>();
+
+        speed = baseSpeed;
     }
 
     private void FixedUpdate()
@@ -42,34 +43,46 @@ public class PlayerMovement : MonoBehaviour
     {
         moveVectorInput = moveVector;
     }
+
+    public void AddRunningInput(bool runInput)
+    {
+        if (runInput && IsMoving)
+        {
+            speed = baseSpeed * 2f;
+            animator?.SetFloat("velocity", 1.5f);
+        }
+        else
+        {
+            speed = baseSpeed;
+        }
+    }
+
     private void HandleMovement()
     {
         CheckForGround();
-        // Рухатися можна лише перебуваючи на землі з кутом нахилу не більшим за максимально дозволений
-        float slopeAngle = Vector3.Angle(groundNormal, Vector3.up);
-        bool onWalkableGround = isGrounded && slopeAngle <= maxSlopeAngle;
 
         // Якщо персонаж стоїть, то притискаємо його до землі, щоб він не зісковзував
         if (!IsMoving)
         {
             moveDirection = Vector3.zero;
-            animator.SetFloat("velocity", 0f);
+            animator?.SetFloat("velocity", 0f);
 
-            if (onWalkableGround)
+            if (isGrounded)
             {
                 rb.useGravity = false;
                 rb.linearVelocity = Vector3.zero;
             }
             else
             {
-                // Якщо персонаж не рухається і перебуває у повітрі
-                // або на надто крутому схилі, повертаємо йому
-                // гравітацію для нормального падіння
+                // Якщо персонаж не рухається і перебуває у повітрі,
+                // повертаємо йому гравітацію для нормального падіння
                 rb.useGravity = true;
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
             }
             return; // Не проводимо обчислення швидкості
         }
 
+        rb.constraints = RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
         // Рух відносно камери
         moveDirection = characterCamera.transform.forward * moveVectorInput.z
                       + characterCamera.transform.right * moveVectorInput.x;
@@ -78,12 +91,12 @@ public class PlayerMovement : MonoBehaviour
 
         float inputMagnitude = Mathf.Clamp01(moveVectorInput.magnitude);
 
-        if (onWalkableGround)
+        if (isGrounded)
         {
-            // Рух уздовж поверхні 
-            Vector3 slopeDirection = Vector3.ProjectOnPlane(moveDirection, groundNormal).normalized;
-            rb.useGravity = false;
-            rb.linearVelocity = slopeDirection * speed * inputMagnitude;
+            rb.linearVelocity = new Vector3(
+                 moveDirection.x * speed * inputMagnitude,
+                 rb.linearVelocity.y,
+                 moveDirection.z * speed * inputMagnitude);
         }
         else
         {
@@ -93,6 +106,7 @@ public class PlayerMovement : MonoBehaviour
             Vector3 velocity = moveDirection * speed * inputMagnitude;
             velocity.y = rb.linearVelocity.y;
             rb.linearVelocity = velocity;
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
         animator.SetFloat("velocity", inputMagnitude);
@@ -116,19 +130,15 @@ public class PlayerMovement : MonoBehaviour
     }
     private void CheckForGround()
     {
-        // Перевірка перебування на землі
-        const float skin = 0.05f;
+        Vector3 center = col.bounds.center;
+        // Визначення математичного зміщення спереду та ззаду відносно напрямку погляду персонажа
+        Vector3 forwardOffset = transform.forward * rayOffsetFromCenter;
 
-        Vector3 half = Vector3.Scale(box.size, transform.lossyScale) * 0.5f;
-        Vector3 bottom = transform.TransformPoint(box.center) - Vector3.up * half.y;
-        Vector3 origin = bottom + Vector3.up * (skin * 2f);
-        Vector3 halfExtents = new Vector3(half.x * 0.95f, skin, half.z * 0.95f);
+        // Випускання двох променів чітко вниз
+        bool isFrontGrounded = Physics.Raycast(center + forwardOffset, Vector3.down, groundCheckDistance);
+        bool isBackGrounded = Physics.Raycast(center - forwardOffset, Vector3.down, groundCheckDistance);
 
-        isGrounded = Physics.BoxCast(origin, halfExtents, Vector3.down, out RaycastHit hit,
-            transform.rotation, skin + groundCheckDistance, groundMask,
-            QueryTriggerInteraction.Ignore);
-
-        groundNormal = isGrounded ? hit.normal : Vector3.up;
+        isGrounded = isFrontGrounded || isBackGrounded;
     }
 
     public void StopMovement()
@@ -138,6 +148,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        animator.SetFloat("velocity", 0f);
+        animator?.SetFloat("velocity", 0f);
     }
+
 }

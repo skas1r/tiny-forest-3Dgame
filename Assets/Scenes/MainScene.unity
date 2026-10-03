@@ -5826,7 +5826,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14985442, y: 0.006344122, z: -0.0009615726, w: 0.9886873}
+  m_LocalRotation: {x: 0.14984378, y: -0.013413291, z: 0.002033041, w: 0.98861665}
   m_LocalPosition: {x: 556.6, y: 167.3, z: 71.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6194,21 +6194,21 @@ ReflectionProbe:
   serializedVersion: 2
   m_Type: 0
   m_Mode: 1
-  m_RefreshMode: 1
+  m_RefreshMode: 0
   m_TimeSlicingMode: 2
-  m_Resolution: 64
+  m_Resolution: 16
   m_UpdateFrequency: 0
-  m_BoxSize: {x: 1007.7496, y: 22.359741, z: 1008.9369}
-  m_BoxOffset: {x: 498.8748, y: 11.179871, z: 499.46844}
+  m_BoxSize: {x: 1007.7496, y: 22.359741, z: 2000}
+  m_BoxOffset: {x: 498.8748, y: 11.179871, z: 115.058556}
   m_NearClip: 0.3
   m_FarClip: 1000
-  m_ShadowDistance: 500
+  m_ShadowDistance: 10
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 39
-  m_IntensityMultiplier: 1.5
+    m_Bits: 4294967295
+  m_IntensityMultiplier: 2
   m_BlendDistance: 1
   m_HDR: 1
   m_BoxProjection: 0
@@ -6225,7 +6225,7 @@ Transform:
   m_GameObject: {fileID: 1175434686}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0.12, z: -0.5}
+  m_LocalPosition: {x: -0.5, y: 0.12, z: 0}
   m_LocalScale: {x: 1, y: 0.02, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7053,13 +7053,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1621718807}
-  - component: {fileID: 1621718809}
   - component: {fileID: 1621718808}
   - component: {fileID: 1621718811}
   - component: {fileID: 1621718810}
   - component: {fileID: 1621718813}
   - component: {fileID: 1621718812}
   - component: {fileID: 1621718814}
+  - component: {fileID: 1621718815}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -7092,7 +7092,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621718806}
   serializedVersion: 5
-  m_Mass: 2
+  m_Mass: 3
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -7109,29 +7109,8 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 96
   m_CollisionDetection: 0
---- !u!65 &1621718809
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1621718806}
-  m_Material: {fileID: 13400000, guid: ff5c5b686cfef81458b63a65ebf74534, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 8, y: 22, z: 50}
-  m_Center: {x: 4, y: -7.5, z: 15}
 --- !u!114 &1621718810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7144,14 +7123,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0110ffd6e13fa249b8b46cb9f8bbed5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterMovement
-  speed: 20
+  baseSpeed: 25
   rotationSpeed: 1
   characterCamera: {fileID: 1925036367}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  groundCheckDistance: 0.3
-  maxSlopeAngle: 70
+  groundCheckDistance: 14
+  rayOffsetFromCenter: 6
+  isGrounded: 0
 --- !u!114 &1621718811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7290,6 +7267,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!136 &1621718815
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621718806}
+  m_Material: {fileID: 13400000, guid: ff5c5b686cfef81458b63a65ebf74534, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 9.68
+  m_Height: 46.3
+  m_Direction: 2
+  m_Center: {x: 4.3, y: -8.68, z: 19.5}
 --- !u!1 &1659721104
 GameObject:
   m_ObjectHideFlags: 0
@@ -7780,7 +7780,7 @@ MonoBehaviour:
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
-        AccelTime: 0.2
+        AccelTime: 0
         DecelTime: 0
     - Name: Look Orbit Y
       Owner: {fileID: 1925036369}
@@ -7793,7 +7793,7 @@ MonoBehaviour:
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
-        AccelTime: 0.2
+        AccelTime: 0
         DecelTime: 0
     - Name: Orbit Scale
       Owner: {fileID: 1925036369}
@@ -7878,7 +7878,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1925036362}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14985436, y: 0.006344121, z: -0.0009615723, w: 0.98868734}
+  m_LocalRotation: {x: 0.14984374, y: -0.013413289, z: 0.0020330402, w: 0.98861665}
   m_LocalPosition: {x: 556.6, y: 167.3, z: 71.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
