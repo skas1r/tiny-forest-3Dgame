@@ -2,7 +2,13 @@
 
 A small 3D Unity game prototype set in a stylized forest. The player explores the terrain, collects mushrooms, manages health, and tries to reach the goal before the forest overwhelms them.
 
+![Main menu screenshot](docs/screenshots/menu.png)
+
 This project includes a main menu, a playable scene, collectible mushroom mechanics, UI overlays, and a simple progression system.
+
+![Gameplay screenshot](docs/screenshots/gameplay_0.png)
+
+![Gameplay screenshot](docs/screenshots/gameplay_1.png)
 
 ## Overview
 
@@ -102,43 +108,6 @@ tiny-forest-3Dgame/
 └── ...
 ```
 
-## Main Scripts
-
-### PlayerMovement.cs
-Handles:
-- walking and sprinting
-- ground detection
-- movement relative to camera direction
-- character rotation
-
-### PlayerInput.cs
-Reads input from Unity input and forwards movement data to the player controller.
-
-### PlayerHealth.cs
-Tracks:
-- health
-- score
-- win/lose conditions
-- mushroom collision behavior
-- sound playback
-
-### MushroomSpawner.cs
-Generates mushrooms across the terrain at valid positions, creating both good and bad variants.
-
-### MushroomScript.cs
-Represents a collectible mushroom and defines how it is consumed when touched.
-
-### UIManager.cs
-Controls:
-- score display
-- health display
-- end-of-game screen
-- win/lose state UI
-- restart and exit buttons
-
-### MainMenuControlller.cs
-Loads the main game scene and exits the application.
-
 ## Requirements
 
 To run this project, you will need:
@@ -155,7 +124,7 @@ The project includes dependencies such as:
 - Physics and terrain-related modules
 
 ## How to Run
-
+### Using Unity Editor:
 1. Open the project in Unity.
 2. Make sure the project is using the correct Unity version compatible with the included packages.
 3. Open the `MainMenu` scene or `MainScene` scene from the `Assets/Scenes` folder.
@@ -164,6 +133,11 @@ The project includes dependencies such as:
 If the project is being launched from the main menu:
 - click Start or Start Game to enter the playable scene
 - click Quit to exit
+
+### Using the Prebuilded Executable Game File:
+1. Go to the `App/TinyForest_x.x.xx` folder.
+2. Find the executable game file and double-click it to run the game.
+3. Make sure to not touch any of the files in the scpecified folder.
 
 ## Recommended Development Notes
 
